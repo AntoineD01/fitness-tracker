@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: workouts
+    ports:
+      - "5432:5432"
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+
+  api-gateway:
+    build: ./backend/api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - workout-service
+      - nutrition-service
+    environment:
+      - PORT=3000
+
+  workout-service:
+    build: ./backend/workout-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    environment:
+      - PORT=3001
+      - PGHOST=postgres
+      - PGUSER=user
+      - PGPASSWORD=password
+      - PGDATABASE=workouts
+
+  nutrition-service:
+    build: ./backend/nutrition-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongo
+    environment:
+      - PORT=3002
+      - MONGO_URI=mongodb://mongo:27017/nutrition
