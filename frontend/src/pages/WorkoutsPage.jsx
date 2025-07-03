@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../api'
 
 export default function WorkoutsPage() {
   const [workouts, setWorkouts] = useState([])
   const [form, setForm] = useState({ name: '', duration: '', user_id: 1 })
 
   useEffect(() => {
-    axios.get('/api/workouts/').then(res => setWorkouts(res.data))
+    api.get('/workouts/').then(res => setWorkouts(res.data))
   }, [])
 
   const addWorkout = () => {
-    axios.post('/api/workouts/', form).then(res => {
+    api.post('/workouts/', form).then(res => {
       setWorkouts(prev => [...prev, res.data])
       setForm({ ...form, name: '', duration: '' })
     })

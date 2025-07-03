@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../api'
 
 export default function MealsPage() {
   const [meals, setMeals] = useState([])
   const [form, setForm] = useState({ name: '', calories: '', user_id: 1 })
 
   useEffect(() => {
-    axios.get('/api/meals/').then(res => setMeals(res.data))
+    api.get('/meals/').then(res => setMeals(res.data))
   }, [])
 
   const addMeal = () => {
-    axios.post('/api/meals/', form).then(res => {
+    api.post('/meals/', form).then(res => {
       setMeals(prev => [...prev, res.data])
       setForm({ ...form, name: '', calories: '' })
     })
