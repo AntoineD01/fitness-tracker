@@ -7,28 +7,18 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: workouts
-    ports:
-      - "5432:5432"
+    volumes:
+      - ./backend/workout-service/init/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend
 
   mongo:
     image: mongo:6
-    ports:
-      - "27017:27017"
-
-  api-gateway:
-    build: ./backend/api-gateway
-    ports:
-      - "3000:3000"
-    depends_on:
-      - workout-service
-      - nutrition-service
-    environment:
-      - PORT=3000
+    networks:
+      - backend
 
   workout-service:
     build: ./backend/workout-service
-    ports:
-      - "3001:3000"
     depends_on:
       - postgres
     environment:
@@ -37,13 +27,28 @@ services:
       - PGUSER=user
       - PGPASSWORD=password
       - PGDATABASE=workouts
+    networks:
+      - backend
 
   nutrition-service:
     build: ./backend/nutrition-service
-    ports:
-      - "3002:3000"
     depends_on:
       - mongo
     environment:
       - PORT=3000
       - MONGO_URI=mongodb://mongo:27017/nutrition
+    networks:
+      - backend
+
+  nginx:
+    build: ./backend/nginx
+    ports:
+      - "3000:80"
+    depends_on:
+      - nutrition-service
+      - workout-service
+    networks:
+      - backend
+
+networks:
+  backend:
