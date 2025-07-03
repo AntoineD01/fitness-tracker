@@ -15,14 +15,14 @@ app.post('/login/google', async (req, res) => {
   if (!credential) return res.status(400).send({ error: 'Missing credential' });
 
   try {
-    // Vérifier le token Google
+    // Vérification du token Google
     const ticket = await googleClient.verifyIdToken({
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
     const payload = ticket.getPayload();
 
-    // Créer notre JWT
+    // Créer notre propre JWT
     const user = {
       id: payload.sub,
       email: payload.email,
@@ -30,7 +30,6 @@ app.post('/login/google', async (req, res) => {
     };
 
     const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1h' });
-
     res.json({ token, user });
   } catch (err) {
     console.error(err);

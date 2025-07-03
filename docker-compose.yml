@@ -50,13 +50,12 @@ services:
     networks:
       - backend
 
-    auth-service:
-      build: ./backend/auth-service
-      ports:
-        - "3003:3000"
-      networks:
-        - backend
-
+  auth-service:
+    build: ./backend/auth-service
+    ports:
+      - "3003:3000"
+    networks:
+      - backend
 
 networks:
   backend:
