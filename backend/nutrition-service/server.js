@@ -2,14 +2,18 @@ require('dotenv').config();
 const express = require('express');
 require('./db');
 const Meal = require('./Meal');
+const authenticateJWT = require('./middleware/authenticateJWT');
 
 const app = express();
 app.use(express.json());
+
 
 // Health check
 app.get('/health', (req, res) => {
   res.send('OK');
 });
+
+app.use('/meals', authenticateJWT);
 
 // Get all meals
 app.get('/meals', async (req, res) => {
