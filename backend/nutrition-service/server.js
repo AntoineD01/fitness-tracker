@@ -17,13 +17,13 @@ app.use('/meals', authenticateJWT);
 
 // Get all meals
 app.get('/meals', async (req, res) => {
-  const meals = await Meal.find();
+  const meals = await Meal.find({ user_id: req.user.id });
   res.json(meals);
 });
 
 // Add meal
 app.post('/meals', async (req, res) => {
-  const meal = new Meal(req.body);
+  const meal = new Meal({ ...req.body, user_id: req.user.id });
   await meal.save();
   res.json(meal);
 });

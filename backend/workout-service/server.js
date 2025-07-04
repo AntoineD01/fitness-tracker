@@ -6,10 +6,12 @@ const authenticateJWT = require('./middleware/authenticateJWT');
 const { graphqlHTTP } = require('express-graphql');
 const schema = require('./graphqlSchema');
 
-app.use('/graphql', authenticateJWT, graphqlHTTP({
+app.use('/graphql', authenticateJWT, graphqlHTTP((req) => ({
   schema,
-  graphiql: true
-}));
+  graphiql: true,
+  context: { user: req.user }
+})));
+
 
 app.use(express.json());
 
@@ -22,18 +24,19 @@ app.use('/workouts', authenticateJWT);
 
 // Get all workouts
 app.get('/workouts', async (req, res) => {
-  const result = await pool.query('SELECT * FROM workouts');
+  const result = await pool.query('SELECT * FROM workouts WHERE user_id = $1', [req.user.id]);
   res.json(result.rows);
 });
 
 // Add workout
 app.post('/workouts', async (req, res) => {
-  const { user_id, name, duration } = req.body;
-  const result = await pool.query(
-    'INSERT INTO workouts (user_id, name, duration) VALUES ($1, $2, $3) RETURNING *',
-    [user_id, name, duration]
-  );
-  res.json(result.rows[0]);
+const { name, duration } = req.body;
+const user_id = req.user.id;
+const result = await pool.query(
+  'INSERT INTO workouts (user_id, name, duration) VALUES ($1, $2, $3) RETURNING *',
+  [user_id, name, duration]
+);
+res.json(result.rows[0]);
 });
 
 // Delete workout

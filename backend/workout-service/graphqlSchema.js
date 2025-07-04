@@ -5,7 +5,7 @@ const WorkoutType = new GraphQLObjectType({
   name: 'Workout',
   fields: () => ({
     id: { type: GraphQLInt },
-    user_id: { type: GraphQLInt },
+    user_id: { type: GraphQLString  },
     name: { type: GraphQLString },
     duration: { type: GraphQLInt }
   })
@@ -16,8 +16,8 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     listWorkouts: {
       type: new GraphQLList(WorkoutType),
-      resolve: async () => {
-        const result = await pool.query('SELECT * FROM workouts');
+      resolve: async (_, __, context) => {
+        const result = await pool.query('SELECT * FROM workouts WHERE user_id = $1', [context.user.id]);
         return result.rows;
       }
     }
@@ -34,14 +34,15 @@ const Mutation = new GraphQLObjectType({
         name: { type: new GraphQLNonNull(GraphQLString) },
         duration: { type: new GraphQLNonNull(GraphQLInt) },
       },
-      resolve: async (_, args) => {
-        const { user_id, name, duration } = args;
+      resolve: async (_, args, context) => {
+        const { name, duration } = args;
+        const user_id = context.user.id;
         const result = await pool.query(
-          'INSERT INTO workouts (user_id, name, duration) VALUES ($1, $2, $3) RETURNING *',
-          [user_id, name, duration]
+            'INSERT INTO workouts (user_id, name, duration) VALUES ($1, $2, $3) RETURNING *',
+            [user_id, name, duration]
         );
         return result.rows[0];
-      }
+        }
     }
   }
 });
