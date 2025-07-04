@@ -3,6 +3,13 @@ const express = require('express');
 const pool = require('./db');
 const app = express();
 const authenticateJWT = require('./middleware/authenticateJWT');
+const { graphqlHTTP } = require('express-graphql');
+const schema = require('./graphqlSchema');
+
+app.use('/graphql', authenticateJWT, graphqlHTTP({
+  schema,
+  graphiql: true
+}));
 
 app.use(express.json());
 
