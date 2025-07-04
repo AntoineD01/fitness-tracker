@@ -17,16 +17,32 @@ export default function WorkoutsPage() {
   }
 
   return (
-    <div>
+    <div style={{ maxWidth: '600px', margin: '2rem auto', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', background: '#f9f9f9' }}>
       <h2>Workouts</h2>
-      <ul>
+      <ul style={{ listStyle: 'none', padding: 0 }}>
         {workouts.map(w => (
-          <li key={w.id}>{w.name} - {w.duration} min</li>
+          <li key={w.id} style={{ margin: '0.5rem 0', padding: '0.5rem', borderBottom: '1px solid #ccc' }}>
+            <strong>{w.name}</strong> — {w.duration} min
+          </li>
         ))}
       </ul>
-      <input placeholder="Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-      <input placeholder="Duration" type="number" value={form.duration} onChange={e => setForm({ ...form, duration: e.target.value })} />
-      <button onClick={addWorkout}>Add Workout</button>
+      <div style={{ marginTop: '1rem' }}>
+        <input
+          placeholder="Name"
+          value={form.name}
+          onChange={e => setForm({ ...form, name: e.target.value })}
+          style={{ marginRight: '0.5rem' }}
+        />
+        <input
+          placeholder="Duration"
+          type="number"
+          value={form.duration}
+          onChange={e => setForm({ ...form, duration: e.target.value })}
+          style={{ marginRight: '0.5rem' }}
+        />
+        <button onClick={addWorkout}>Add Workout</button>
+      </div>
     </div>
-  )
+  );
+
 }

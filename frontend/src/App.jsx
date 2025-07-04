@@ -28,6 +28,7 @@ export default function App() {
     setToken(null);
     setUser(null);
     localStorage.removeItem('jwt');
+    window.location.reload();
   };
 
   useEffect(() => {
