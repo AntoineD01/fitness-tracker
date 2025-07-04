@@ -6,10 +6,10 @@ import MealsPage from './pages/MealsPage';
 import WorkoutsPage from './pages/WorkoutsPage';
 import { jwtDecode } from 'jwt-decode';
 
-
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('jwt') || null);
   const [user, setUser] = useState(null);
+  const [weather, setWeather] = useState(null);
 
   const handleLoginSuccess = async (credentialResponse) => {
     try {
@@ -42,9 +42,45 @@ export default function App() {
     }
   }, [token, user]);
 
+  useEffect(() => {
+  const fetchWeather = async () => {
+    try {
+      const city = 'Paris';
+      const apiKey = 'bb95eb69bdaabbd671330246aab034b0';
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+      const res = await axios.get(url);
+      setWeather({
+        city: res.data.name,
+        temp: res.data.main.temp,
+        icon: res.data.weather[0].icon,
+        description: res.data.weather[0].description
+      });
+    } catch (err) {
+      console.error('Erreur météo', err);
+    }
+  };
+
+  fetchWeather();
+}, []);
+
+
   return (
     <div style={{ padding: '2rem' }}>
       <h1>Fitness Tracker</h1>
+
+      {weather && (
+        <div style={{
+          border: '1px solid #ddd',
+          padding: '1rem',
+          borderRadius: '8px',
+          marginBottom: '1rem',
+          background: '#eef'
+        }}>
+          <h3>Météo du jour à {weather.city}</h3>
+          <p>{weather.temp}°C — {weather.description}</p>
+          <img src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`} alt="icon météo" />
+        </div>
+      )}
 
       {!token && (
         <GoogleLogin
