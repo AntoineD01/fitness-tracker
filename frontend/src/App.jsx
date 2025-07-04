@@ -43,25 +43,43 @@ export default function App() {
   }, [token, user]);
 
   useEffect(() => {
-  const fetchWeather = async () => {
-    try {
-      const city = 'Paris';
-      const apiKey = 'bb95eb69bdaabbd671330246aab034b0';
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
-      const res = await axios.get(url);
-      setWeather({
-        city: res.data.name,
-        temp: res.data.main.temp,
-        icon: res.data.weather[0].icon,
-        description: res.data.weather[0].description
-      });
-    } catch (err) {
-      console.error('Erreur météo', err);
-    }
-  };
+    const fetchWeather = async (lat, lon) => {
+      try {
+        const apiKey = 'bb95eb69bdaabbd671330246aab034b0'; 
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+        const res = await axios.get(url);
+        setWeather({
+          city: res.data.name,
+          temp: res.data.main.temp,
+          icon: res.data.weather[0].icon,
+          description: res.data.weather[0].description
+        });
+      } catch (err) {
+        console.error('Erreur météo', err);
+      }
+    };
 
-  fetchWeather();
-}, []);
+    const getUserLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            fetchWeather(latitude, longitude);
+          },
+          (error) => {
+            console.error('Erreur géolocalisation', error);
+            // fallback : Paris
+            fetchWeather(48.8566, 2.3522);
+          }
+        );
+      } else {
+        console.error('Géolocalisation non supportée');
+        fetchWeather(48.8566, 2.3522);
+      }
+    };
+
+    getUserLocation();
+  }, []);
 
 
   return (
