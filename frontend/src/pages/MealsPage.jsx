@@ -6,6 +6,8 @@ export default function MealsPage() {
   const [form, setForm] = useState({ name: '', calories: '', user_id: 1 })
 
   useEffect(() => {
+    const token = localStorage.getItem('jwt')
+    if (!token) return
     api.get('/meals/').then(res => setMeals(res.data))
   }, [])
 

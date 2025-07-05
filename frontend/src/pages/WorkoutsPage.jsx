@@ -6,6 +6,8 @@ export default function WorkoutsPage() {
   const [form, setForm] = useState({ name: '', duration: '', user_id: 1 })
 
   useEffect(() => {
+    const token = localStorage.getItem('jwt')
+    if (!token) return
     api.get('/workouts/').then(res => setWorkouts(res.data))
   }, [])
 
