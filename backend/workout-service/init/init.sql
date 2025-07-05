@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS workouts (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER,
-  name TEXT,
-  duration INTEGER
+  user_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  duration INTEGER NOT NULL
 );
