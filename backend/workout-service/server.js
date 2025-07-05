@@ -6,11 +6,13 @@ const authenticateJWT = require('./middleware/authenticateJWT');
 const { graphqlHTTP } = require('express-graphql');
 const schema = require('./graphqlSchema');
 
-app.use('/graphql', authenticateJWT, graphqlHTTP((req) => ({
-  schema,
-  graphiql: true,
-  context: { user: req.user }
-})));
+app.use('/graphql', authenticateJWT, (req, res) => {
+  graphqlHTTP({
+    schema,
+    graphiql: true,
+    context: { user: req.user }
+  })(req, res);
+});
 
 
 app.use(express.json());

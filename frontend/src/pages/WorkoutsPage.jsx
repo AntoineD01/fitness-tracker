@@ -18,13 +18,20 @@ export default function WorkoutsPage() {
     })
   }
 
+  const deleteWorkout = (id) => {
+    api.delete(`/workouts/${id}`).then(() => {
+      setWorkouts(prev => prev.filter(w => w.id !== id))
+    })
+  }
+
   return (
     <div style={{ maxWidth: '600px', margin: '2rem auto', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', background: '#f9f9f9' }}>
       <h2>Workouts</h2>
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {workouts.map(w => (
-          <li key={w.id} style={{ margin: '0.5rem 0', padding: '0.5rem', borderBottom: '1px solid #ccc' }}>
-            <strong>{w.name}</strong> — {w.duration} min
+          <li key={w.id} style={{ margin: '0.5rem 0', padding: '0.5rem', borderBottom: '1px solid #ccc', display: 'flex', justifyContent: 'space-between' }}>
+            <span><strong>{w.name}</strong> — {w.duration} min</span>
+            <button onClick={() => deleteWorkout(w.id)}>Delete</button>
           </li>
         ))}
       </ul>
@@ -46,5 +53,4 @@ export default function WorkoutsPage() {
       </div>
     </div>
   );
-
 }

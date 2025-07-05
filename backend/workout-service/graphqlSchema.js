@@ -30,7 +30,6 @@ const Mutation = new GraphQLObjectType({
     addWorkout: {
       type: WorkoutType,
       args: {
-        user_id: { type: new GraphQLNonNull(GraphQLInt) },
         name: { type: new GraphQLNonNull(GraphQLString) },
         duration: { type: new GraphQLNonNull(GraphQLInt) },
       },
